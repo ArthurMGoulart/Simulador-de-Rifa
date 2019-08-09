@@ -7,12 +7,15 @@ package br.ufsc.ine5605.rifa.Controles;
 
 import br.ufsc.ine5605.rifa.Entidades.Apostador;
 import br.ufsc.ine5605.rifa.Entidades.Rifa;
+import br.ufsc.ine5605.rifa.Telas.AcoesBotao;
 import br.ufsc.ine5605.rifa.Telas.TelaAcessarRifa;
 import br.ufsc.ine5605.rifa.Telas.TelaCriarRifa;
 import br.ufsc.ine5605.rifa.Telas.TelaListarApostadoresDaRifa;
 import br.ufsc.ine5605.rifa.Telas.TelaProduto;
+import br.ufsc.ine5605.rifa.Telas.TelaRifaFinalizada;
 import br.ufsc.ine5605.rifa.Telas.TelaRifaNaoFinalizada;
 import java.io.Serializable;
+import javax.swing.ListModel;
 
 
 /**
@@ -94,7 +97,7 @@ public class CtrlRifa implements Serializable{
         }
         
         this.rifaControlada.adicionarProduto(nomeProduto, precoProduto);
-        
+         
     }
 
     public void finalizarRifa() throws Exception{
@@ -108,19 +111,25 @@ public class CtrlRifa implements Serializable{
         MapeadorRifa.getInstancia().putRifa(rifaControlada);
             
         this.rifaControlada.finalizarApostadores();
+
+        TelaRifaNaoFinalizada.getInstancia().desligar();
+        
+        CtrlPrincipal.getInstancia().ligarTela();
         
     }
 
-    private void sortearProdutos() throws Exception{
+    public String[] sortearProduto() throws Exception{
+        
+        String[] informacoes = this.rifaControlada.sortearUmProduto();
     
-        this.rifaControlada.sortearUmProduto();
+        return informacoes;
         
     }
 
     public void associarApostador(Rifa rifaParaAssociar, Apostador apostador) throws Exception{
         
         rifaParaAssociar.serAssociadaComApostador(apostador);
-        
+           
     }
 
     public void iniciarTelaCriarRifa() {
@@ -163,21 +172,33 @@ public class CtrlRifa implements Serializable{
         
         setRifaControlada(MapeadorRifa.getInstancia().findRifaByCodigo(codigo));
         
-        TelaAcessarRifa.getInstancia().desligar();
+        if(!rifaControlada.isFinalizada()){
         
-        TelaRifaNaoFinalizada.getInstancia().atualizarCodigoDaRifa();
-        
-        iniciarTelaRifaNaoFinalizada();
+            TelaAcessarRifa.getInstancia().desligar();
+
+            TelaRifaNaoFinalizada.getInstancia().atualizarCodigoDaRifa();
+
+            iniciarTelaRifaNaoFinalizada();
       
+        }else{
+            
+            TelaAcessarRifa.getInstancia().desligar();
+            
+            TelaRifaFinalizada.getInstancia().atualizarInformacoesRifa();
+            
+            TelaRifaFinalizada.getInstancia().ligar();
+
+        }
+        
     }
     
-    public void realizaAcaoCriarRifa(String acao) {
+    public void realizaAcaoCriarRifa(AcoesBotao acao) {
         
-        if(acao.equals("Criar Rifa")){
+        if(acao.equals(AcoesBotao.CriarRifaTela)){
         
             TelaCriarRifa.getInstancia().iniciarCriarRifa();
         
-        }else if(acao.equals("Voltar")){
+        }else if(acao.equals(AcoesBotao.VoltarTelaCriarRifa)){
         
             TelaCriarRifa.getInstancia().desligar();
             
@@ -187,15 +208,15 @@ public class CtrlRifa implements Serializable{
         
     }
 
-    public void realizarAcaoRifaNaoFinalizada(String acao) {
+    public void realizarAcaoRifaNaoFinalizada(AcoesBotao acao) {
         
-        if(acao.equals("Adicionar Produto")){
+        if(acao.equals(AcoesBotao.AdicionarProdutoRifaNaoFinalizada)){
                       
             desligarTelaRifaNaoFinalizada();
                 
             TelaProduto.getInstancia().ligarAdicionar();   
         
-        }else if(acao.equals("Listar Produtos")){
+        }else if(acao.equals(AcoesBotao.ListarProdutosRifaNaoFinalizada)){
 
             desligarTelaRifaNaoFinalizada();
             
@@ -203,15 +224,19 @@ public class CtrlRifa implements Serializable{
                 
             TelaProduto.getInstancia().ligarListagem();
 
-        }else if(acao.equals("Listar Apostadores Associados")){
+        }else if(acao.equals(AcoesBotao.ListarApostadoresRifaNaoFinalizada)){
         
             desligarTelaRifaNaoFinalizada();
             
-            TelaListarApostadoresDaRifa.getInstancia().atualizarListagem();
+            TelaListarApostadoresDaRifa.getInstancia().atualizarListagemApostadores();
             
-            TelaListarApostadoresDaRifa.getInstancia().ligar();
+            TelaListarApostadoresDaRifa.getInstancia().ligarListagemApostadores();
         
-        }else if(acao.equals("Voltar")){
+        }else if(acao.equals(AcoesBotao.FinalizarRifaNaoFinalizada)){
+        
+            TelaRifaNaoFinalizada.getInstancia().iniciarFinalizarRifa();
+        
+        }else if(acao.equals(AcoesBotao.VoltarRifaNaoFinalizada)){
         
             desligarTelaRifaNaoFinalizada();
             
@@ -232,38 +257,94 @@ public class CtrlRifa implements Serializable{
         return this.rifaControlada.getNomeApostadores();
         
     }
+    
+    public String[] getNomesApostadoresGanhadoresDaRifa(){
+    
+        return this.rifaControlada.getNomeApostadoresGanhadores();
+    
+    }
 
-    public void realizarAcaoTelaProduto(String acao) {
+    public void realizarAcaoTelaProduto(AcoesBotao acao) {
         
-        if(acao.equals("Adicionar o Produto")){
+        if(acao.equals(AcoesBotao.AdicionarProdutoPainel)){
         
             TelaProduto.getInstancia().adicionarProduto();
 
-        }else if(acao.equals("Voltar")){
+        }else if(acao.equals(AcoesBotao.VoltarTelaProdutoAdicionando)){
             
             TelaProduto.getInstancia().desligarAdicionar();
+            
+            iniciarTelaRifaNaoFinalizada();
+        
+        }else if(acao.equals(AcoesBotao.VoltarTelaProdutoListando)){
         
             TelaProduto.getInstancia().desligarListagem();
             
             iniciarTelaRifaNaoFinalizada();
-        
+            
         }
         
     }
 
-    public void realizarAcaoAcessarRifa(String acao) {
+    public void realizarAcaoAcessarRifa(AcoesBotao acao) {
     
-        if(acao.equals("Acessar Rifa")){
+        if(acao.equals(AcoesBotao.AcessarRifaTela)){
         
             TelaAcessarRifa.getInstancia().iniciarAcessarRifa();
             
-        }else if(acao.equals("Voltar")){
+        }else if(acao.equals(AcoesBotao.VoltarTelaAcessarRifa)){
         
             TelaAcessarRifa.getInstancia().desligar();
             
             CtrlPrincipal.getInstancia().ligarTela();
         
         }
+        
+    }
+
+    public void realizarAcaoRifaFinalizada(AcoesBotao acao) {
+        
+        if(acao.equals(AcoesBotao.SortearProduto)){
+        
+            TelaRifaFinalizada.getInstancia().iniciarSortearProduto();
+        
+        }else if(acao.equals(AcoesBotao.ListarApostadoresGanhadores)){
+        
+            TelaRifaFinalizada.getInstancia().desligar();
+            
+            TelaListarApostadoresDaRifa.getInstancia().ligarListagemApostadoresGanhadores();
+        
+        }else if(acao.equals(AcoesBotao.VoltarRifaFinalizada)){
+        
+            TelaRifaFinalizada.getInstancia().desligar();
+            
+            CtrlPrincipal.getInstancia().ligarTela();
+  
+        }
+    
+    }
+
+    public void realizaAcaoTelaListarApostadores(AcoesBotao acao) {
+        
+        if(acao.equals(AcoesBotao.VoltarListagemApostadores)){
+        
+            TelaListarApostadoresDaRifa.getInstancia().desligarListagemApostadores();
+            
+            TelaRifaNaoFinalizada.getInstancia().ligar();
+        
+        }else if(acao.equals(AcoesBotao.VoltarListagemApostadoresGanhadores)){
+        
+            TelaListarApostadoresDaRifa.getInstancia().desligarListagemApostadoresGanhadores();
+            
+            TelaRifaFinalizada.getInstancia().ligar();
+        
+        }
+        
+    }
+
+    public String[] getNomeApostadoresGanhadores() {
+        
+        return this.rifaControlada.getNomeApostadoresGanhadores();
         
     }
 

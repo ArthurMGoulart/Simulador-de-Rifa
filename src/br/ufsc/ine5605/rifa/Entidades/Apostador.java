@@ -38,21 +38,27 @@ public class Apostador extends Pessoa implements Serializable{
         
     }
 
-    public ArrayList<Integer> getNumerosComprados() {
-        
-        return numerosComprados;
-        
-    }
-
     public AssocRifaApostador getRifaAssociada() {
         
         return rifaAssociada;
         
     }
 
-    public ArrayList<Produto> getProdutosGanhos() {
+    public String[] getNomeProdutosGanhos() {
         
-        return produtosGanhos;
+        String[] nomes = new String[produtosGanhos.size()];
+        
+        int i = 0;
+        
+        for(Produto produto : produtosGanhos){
+        
+            nomes[i] = produto.getNome();
+            
+            i++;
+        
+        }
+        
+        return nomes;
         
     }
     
@@ -156,6 +162,24 @@ public class Apostador extends Pessoa implements Serializable{
         
         return true;
     
+    }
+    
+    public String[] getNumerosComprados(){
+        
+        String[] numeros = new String[this.numerosComprados.size()];
+        
+        int i = 0;
+    
+        for(Integer numeroTeste : numerosComprados){
+        
+            numeros[i] = Integer.toString(numeroTeste);
+            
+            i++;
+        
+        }
+        
+        return numeros;
+
     }
     
 }

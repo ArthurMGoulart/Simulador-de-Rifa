@@ -51,9 +51,9 @@ public class TelaProduto extends Tela implements Serializable{
     
     private JPanel painelListagem;
     
-    private final JButton voltarAdicionar = new JButton("Voltar");
+    private final Botao voltarAdicionar = new Botao("Voltar", AcoesBotao.VoltarTelaProdutoAdicionando);
     
-    private final JButton voltarListar = new JButton("Voltar");
+    private final Botao voltarListar = new Botao("Voltar", AcoesBotao.VoltarTelaProdutoListando);
     
     private Container container;
     
@@ -101,7 +101,7 @@ public class TelaProduto extends Tela implements Serializable{
         
         inserirPreco = new JTextField(10);
         
-        adicionarProduto = new JButton("Adicionar o Produto");
+        adicionarProduto = new Botao("Adicionar o Produto", AcoesBotao.AdicionarProdutoPainel);
         
         painelAdicionar = new JPanel();
         
@@ -153,11 +153,9 @@ public class TelaProduto extends Tela implements Serializable{
         
         listarProdutos = new JLabel("Listando os Produtos");
         
-        painelListagem = new JPanel();
+        painelListagem = new JPanel(new GridBagLayout());
         
         listaNomesProdutos = new JList(CtrlRifa.getInstancia().getNomesProdutoDaRifaControlada());
-        
-        painelListagem.setLayout(new GridBagLayout());
         
         painelListagem.setSize(700,320);
         
@@ -219,8 +217,6 @@ public class TelaProduto extends Tela implements Serializable{
     
     }
     
-    
-    
     public void adicionarProduto(){
         
         String nomeTeste = inserirNome.getText();
@@ -252,8 +248,10 @@ public class TelaProduto extends Tela implements Serializable{
     private class GerenciadorBotoes implements ActionListener{
 
         public void actionPerformed(ActionEvent ae){
+            
+            Botao teste = (Botao) ae.getSource();
   
-            CtrlRifa.getInstancia().realizarAcaoTelaProduto(ae.getActionCommand());
+            CtrlRifa.getInstancia().realizarAcaoTelaProduto(teste.getAcao());
             
         }
 

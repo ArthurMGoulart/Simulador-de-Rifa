@@ -5,7 +5,6 @@
  */
 package br.ufsc.ine5605.rifa.Entidades;
 
-import br.ufsc.ine5605.rifa.Controles.CtrlRifa;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -158,8 +157,6 @@ public class Rifa implements Serializable{
         Produto produto = new Produto(nome, preco);
             
         produtos.add(produto);
-        
-        CtrlRifa.getInstancia().getMapeadorRifa().persist();
                         
     }
     
@@ -174,15 +171,7 @@ public class Rifa implements Serializable{
     
     }
     
-    public void definirNumerosParaVender(){
     
-        for(int i = 0; i < this.quantidadeDeNumerosParaVender; i++){
-        
-            this.numerosParaVender.add(i);
-            
-        }
-    
-    }
     
     public void somarOsPrecosProduto(){
         
@@ -252,7 +241,7 @@ public class Rifa implements Serializable{
         
     }
     
-    public void sortearUmProduto() throws Exception{
+    public String[] sortearUmProduto() throws Exception{
         
         if(produtos.isEmpty()){
         
@@ -273,6 +262,16 @@ public class Rifa implements Serializable{
         numerosParaSortear.remove(Integer.valueOf(numeroSorteado));
                 
         produtos.remove(produtoSorteado);
+        
+        String[] informacoes = new String[3];
+        
+        informacoes[0] = Integer.toString(numeroSorteado);
+        
+        informacoes[1] = produtoSorteado.getNome();
+        
+        informacoes[2] = apostadorGanhador.getNome();
+        
+        return informacoes;
                        
     }
     
@@ -329,6 +328,16 @@ public class Rifa implements Serializable{
         }
         
         return produtoMenorPreco;
+    
+    }
+    
+    public void definirNumerosParaVender(){
+    
+        for(int i = 0; i < this.quantidadeDeNumerosParaVender; i++){
+        
+            this.numerosParaVender.add(i);
+            
+        }
     
     }
     
@@ -406,6 +415,54 @@ public class Rifa implements Serializable{
         
         return nomes;
         
+    }
+    
+    public String[] getNomeApostadoresGanhadores(){
+
+        Apostador[] apostadoresGanhadores = new Apostador[apostadores.size()];
+        
+        int k = 0;
+        
+        for(AssocRifaApostador apostadorTeste : apostadores){
+        
+            if(apostadorTeste.getApostador().eGanhador()){
+                
+                apostadoresGanhadores[k] = apostadorTeste.getApostador();
+                
+                k++;
+            
+            }
+        
+        }
+        
+        String[] nomes = new String[k];
+        
+        for(int y = 0; y < k; y++){
+        
+            nomes[y] = apostadoresGanhadores[y].getNome();
+        
+        }
+        
+        return nomes;
+        
+    }
+    
+    public String[] getNumerosDisponiveis(){
+        
+        String[] numeros = new String[numerosParaVender.size()];
+        
+        int k = 0;
+        
+        for(Integer numero : numerosParaVender){
+        
+            numeros[k] = Integer.toString(numero);
+            
+            k++;
+        
+        }
+        
+        return numeros;
+    
     }
 
 }

@@ -15,6 +15,7 @@ import java.awt.event.ActionListener;
 import java.io.Serializable;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -26,13 +27,15 @@ public class TelaRifaNaoFinalizada extends Tela implements Serializable{
     
     private JLabel codigoDaRifa;
     
-    private JButton adicionarProduto;
+    private Botao adicionarProduto;
     
-    private JButton listarProdutos;
+    private Botao listarProdutos;
     
-    private JButton listarApostadores;
+    private Botao listarApostadores;
     
-    private JButton voltar;
+    private Botao finalizarRifa;
+    
+    private Botao voltar;
     
     private Container container;
     
@@ -66,13 +69,15 @@ public class TelaRifaNaoFinalizada extends Tela implements Serializable{
             
         }    
         
-        adicionarProduto = new JButton("Adicionar Produto");
+        adicionarProduto = new Botao("Adicionar Produto", AcoesBotao.AdicionarProdutoRifaNaoFinalizada);
 
-        listarProdutos = new JButton("Listar Produtos");
+        listarProdutos = new Botao("Listar Produtos", AcoesBotao.ListarProdutosRifaNaoFinalizada);
 
-        listarApostadores = new JButton("Listar Apostadores Associados");
+        listarApostadores = new Botao("Listar Apostadores Associados", AcoesBotao.ListarApostadoresRifaNaoFinalizada);
 
-        voltar = new JButton("Voltar");
+        finalizarRifa = new Botao("Finalizar Rifa", AcoesBotao.FinalizarRifaNaoFinalizada);
+        
+        voltar = new Botao("Voltar", AcoesBotao.VoltarRifaNaoFinalizada);
 
         container = getContentPane();
 
@@ -102,6 +107,10 @@ public class TelaRifaNaoFinalizada extends Tela implements Serializable{
 
         c.gridy = 5;
 
+        container.add(finalizarRifa, c);
+        
+        c.gridy = 6;
+        
         container.add(voltar, c);
 
         adicionarProduto.addActionListener(gerenciador);
@@ -109,6 +118,8 @@ public class TelaRifaNaoFinalizada extends Tela implements Serializable{
         listarProdutos.addActionListener(gerenciador);
 
         listarApostadores.addActionListener(gerenciador);
+        
+        finalizarRifa.addActionListener(gerenciador);
 
         voltar.addActionListener(gerenciador);
 
@@ -144,7 +155,23 @@ public class TelaRifaNaoFinalizada extends Tela implements Serializable{
         
         c.insets = new Insets(0,0,20,0);
         
-        container.add(codigoDaRifa);
+        container.add(codigoDaRifa, c);
+        
+    }
+
+    public void iniciarFinalizarRifa() {
+        
+        try{
+        
+            CtrlRifa.getInstancia().finalizarRifa();
+            
+            JOptionPane.showMessageDialog(null, "Rifa finalizada com Sucesso");
+        
+        }catch(Exception e){
+        
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        
+        }
         
     }
     
@@ -152,7 +179,9 @@ public class TelaRifaNaoFinalizada extends Tela implements Serializable{
 
         public void actionPerformed(ActionEvent ae){
             
-            CtrlRifa.getInstancia().realizarAcaoRifaNaoFinalizada(ae.getActionCommand());
+            Botao teste = (Botao) ae.getSource();
+            
+            CtrlRifa.getInstancia().realizarAcaoRifaNaoFinalizada(teste.getAcao());
             
         }
 

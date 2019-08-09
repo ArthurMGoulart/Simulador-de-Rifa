@@ -43,9 +43,9 @@ public class TelaCriarRifa extends Tela implements Serializable{
     
     private JTextField inserirQuantidadeNumeros;
     
-    private JButton finalizarCriar;
+    private Botao finalizarCriar;
     
-    private JButton voltar;
+    private Botao voltar;
     
     private Container container;
     
@@ -85,9 +85,9 @@ public class TelaCriarRifa extends Tela implements Serializable{
         
         inserirQuantidadeNumeros = new JTextField(10);
         
-        finalizarCriar = new JButton("Criar Rifa");
+        finalizarCriar = new Botao("Criar Rifa", AcoesBotao.CriarRifaTela);
         
-        voltar = new JButton("Voltar");
+        voltar = new Botao("Voltar", AcoesBotao.VoltarTelaCriarRifa);
         
         container = getContentPane();
         
@@ -201,7 +201,9 @@ public class TelaCriarRifa extends Tela implements Serializable{
 
         public void actionPerformed(ActionEvent ae){
             
-            CtrlRifa.getInstancia().realizaAcaoCriarRifa(ae.getActionCommand());
+            Botao teste = (Botao) ae.getSource();
+            
+            CtrlRifa.getInstancia().realizaAcaoCriarRifa(teste.getAcao());
                     
             
         }

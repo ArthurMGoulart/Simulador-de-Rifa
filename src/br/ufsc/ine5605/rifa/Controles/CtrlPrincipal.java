@@ -5,6 +5,7 @@
  */
 package br.ufsc.ine5605.rifa.Controles;
 
+import br.ufsc.ine5605.rifa.Telas.AcoesBotao;
 import br.ufsc.ine5605.rifa.Telas.TelaCriarRifa;
 import br.ufsc.ine5605.rifa.Telas.TelaPrincipal;
 import java.io.Serializable;
@@ -34,42 +35,40 @@ public class CtrlPrincipal implements Serializable{
         
     }
     
-    public void realizaAcao(String acao){
+    public void realizaAcao(AcoesBotao acao){
         
-        switch(acao){
+        if(acao.equals(AcoesBotao.CriarRifaMenu)){
         
-            case "Criar Rifa":
+            this.desligarTela();
                 
-                this.desligarTela();
+            CtrlRifa.getInstancia().iniciarTelaCriarRifa();
+            
+        }else if(acao.equals(AcoesBotao.AcessarRifaMenu)){
+        
+            this.desligarTela();
                 
-                CtrlRifa.getInstancia().iniciarTelaCriarRifa();
+            CtrlRifa.getInstancia().iniciarTelaAcessarRifa();
+        
+        }else if(acao.equals(AcoesBotao.CriarApostadorMenu)){
+        
+            this.desligarTela();
                 
-                break;
+            CtrlApostador.getInstancia().iniciarTelaCriarApostador();
+        
+        }else if(acao.equals(AcoesBotao.AcessarApostadorMenu)){
+        
+            this.desligarTela();
                 
-            case "Acessar Rifa":
-                
-                this.desligarTela();
-                
-                CtrlRifa.getInstancia().iniciarTelaAcessarRifa();
-                
-                break;
-                
-            case "Criar Apostador":
-                
-                this.desligarTela();
-                
-                CtrlApostador.getInstancia().iniciarTelaCriarApostador();
-                
-                break;
-                
-            case "Acessar Apostador":
-                
-                this.desligarTela();
-                
-                CtrlApostador.getInstancia().iniciarTelaAcessarApostador();
-                
-                break;
-                
+            CtrlApostador.getInstancia().iniciarTelaAcessarApostador();
+        
+        }else if(acao.equals(AcoesBotao.Encerrar)){
+        
+            persistirRifa();
+            
+            persistirApostador();
+            
+            System.exit(0);
+        
         }
     
     }
@@ -91,5 +90,18 @@ public class CtrlPrincipal implements Serializable{
         return CtrlRifa.getInstancia();
         
     }
+
+    public void persistirRifa() {
+        
+        CtrlRifa.getInstancia().getMapeadorRifa().persist();
+        
+    }
+    
+    public void persistirApostador(){
+    
+        CtrlApostador.getInstancia().getMapeadorApostador().persist();
+    
+    }
+    
     
 }

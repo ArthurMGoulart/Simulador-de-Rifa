@@ -34,9 +34,9 @@ public class TelaAcessarApostador extends Tela{
     
     private JTextField inserirCpf;
     
-    private JButton botaoFinalizar;
+    private Botao botaoFinalizar;
     
-    private JButton voltar;
+    private Botao voltar;
     
     private Container container;
     
@@ -69,9 +69,9 @@ public class TelaAcessarApostador extends Tela{
         
         inserirCpf = new JTextField(10);
         
-        botaoFinalizar = new JButton("Acessar Apostador");
+        botaoFinalizar = new Botao("Acessar Apostador", AcoesBotao.AcessarApostadorTela);
         
-        voltar = new JButton("Voltar");
+        voltar = new Botao("Voltar", AcoesBotao.VoltarTelaAcessarApostador);
         
         container = getContentPane();
         
@@ -80,6 +80,8 @@ public class TelaAcessarApostador extends Tela{
         setSize(700,320);
         
         GridBagConstraints c = new GridBagConstraints();
+        
+        c.fill = GridBagConstraints.HORIZONTAL;
         
         c.insets = new Insets(0,0,70,0);
         
@@ -149,7 +151,9 @@ public class TelaAcessarApostador extends Tela{
 
         public void actionPerformed(ActionEvent ae){
             
-            CtrlApostador.getInstancia().realizarAcaoAcessarApostador(ae.getActionCommand());
+            Botao teste = (Botao) ae.getSource();
+            
+            CtrlApostador.getInstancia().realizarAcaoAcessarApostador(teste.getAcao());
             
         }
 

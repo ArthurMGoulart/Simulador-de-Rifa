@@ -14,6 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -35,19 +36,19 @@ public class TelaApostadorIniciado extends Tela{
     
     private JTextField inserirCodigoRifa;
     
-    private JButton botaoAssociarRifaMenu;
+    private Botao botaoAssociarRifaMenu;
     
-    private JButton botaoAssociarRifaPanel;
+    private Botao botaoAssociarRifaPanel;
     
-    private JButton botaoDeletarApostadorMenu;
+    private Botao botaoDeletarApostadorMenu;
     
-    private JButton botaoDeletarApostadorPanel;
+    private Botao botaoDeletarApostadorPanel;
     
-    private JButton botaoVoltarMenu;
+    private Botao botaoVoltarMenu;
     
-    private JButton botaoVoltarAssociar;
+    private Botao botaoVoltarAssociar;
      
-    private JButton botaoVoltarDeletar;
+    private Botao botaoVoltarDeletar;
     
     private JPanel painelMenu;
     
@@ -97,15 +98,17 @@ public class TelaApostadorIniciado extends Tela{
     
         }
         
-        botaoAssociarRifaMenu = new JButton("Associar Com Rifa");
+        botaoAssociarRifaMenu = new Botao("Associar Com Rifa", AcoesBotao.AssociarApostadorIniciadoMenu);
         
-        botaoDeletarApostadorMenu = new JButton("Deletar Apostador");
+        botaoDeletarApostadorMenu = new Botao("Deletar Apostador", AcoesBotao.DeletarApostadorIniciadoMenu);
         
-        botaoVoltarMenu = new JButton("Voltar");
+        botaoVoltarMenu = new Botao("Voltar", AcoesBotao.VoltarApostadorIniciadoMenu);
         
         painelMenu = new JPanel(new GridBagLayout());
         
         GridBagConstraints c = new GridBagConstraints();
+        
+        c.fill = GridBagConstraints.HORIZONTAL;
         
         c.insets = new Insets(0,0,40,0);
         
@@ -137,7 +140,9 @@ public class TelaApostadorIniciado extends Tela{
         
         if(CtrlApostador.getInstancia().getApostadorControlado() != null){
     
-            nomeApostadorAssociando = new JLabel("Associando Apostador " + CtrlApostador.getInstancia().getNomeApostador() + "Com Rifa");
+            nomeApostadorAssociando = new JLabel("Associando Apostador " + CtrlApostador.getInstancia().getNomeApostador()
+                    
+                    + "Com Rifa");
         
         }
         
@@ -145,15 +150,17 @@ public class TelaApostadorIniciado extends Tela{
         
         inserirCodigoRifa = new JTextField(10);
         
-        botaoAssociarRifaPanel = new JButton("Associar com Rifa");
+        botaoAssociarRifaPanel = new Botao("Associar com Rifa", AcoesBotao.AssociarApostadorPainel);
         
-        botaoVoltarAssociar = new JButton("Voltar");
+        botaoVoltarAssociar = new Botao("Voltar", AcoesBotao.VoltarApostadorIniciadoAssociar);
         
         botaoVoltarAssociar.setActionCommand("Voltar Painel Associar");
         
         painelAssociar = new JPanel(new GridBagLayout());
 
         GridBagConstraints c = new GridBagConstraints();
+        
+        c.fill = GridBagConstraints.HORIZONTAL;
         
         c.insets = new Insets(0,0,40,0);
         
@@ -195,6 +202,33 @@ public class TelaApostadorIniciado extends Tela{
     
         }
         
+        botaoDeletarApostadorPanel = new Botao("Confirmar que Apostador seja deletado", AcoesBotao.DeletarApostadorPainel);
+        
+        botaoVoltarDeletar = new Botao("Voltar", AcoesBotao.VoltarApostadorIniciadoDeletar);
+        
+        painelDeletar = new JPanel(new GridBagLayout());
+        
+        GridBagConstraints c = new GridBagConstraints();
+        
+        c.fill = GridBagConstraints.HORIZONTAL;
+        
+        c.insets = new Insets(0,0,40,0);
+        
+        painelDeletar.add(nomeApostadorDeletando, c);
+        
+        c.insets = new Insets(0,0,15,0);
+        
+        c.gridy = 1;
+        
+        painelDeletar.add(botaoDeletarApostadorPanel, c);
+        
+        c.gridy = 2;
+        
+        painelDeletar.add(botaoVoltarDeletar, c);
+        
+        botaoDeletarApostadorPanel.addActionListener(gerenciador);
+        
+        botaoVoltarDeletar.addActionListener(gerenciador);
         
     
     }
@@ -214,6 +248,8 @@ public class TelaApostadorIniciado extends Tela{
         nomeApostadorDeletando = new JLabel("Deletando Apostador " + CtrlApostador.getInstancia().getNomeApostador());
         
         GridBagConstraints c = new GridBagConstraints();
+        
+        c.fill = GridBagConstraints.HORIZONTAL;
         
         c.insets = new Insets(0,0,40,0);
         
@@ -258,11 +294,56 @@ public class TelaApostadorIniciado extends Tela{
         
     }
     
+    public void ligarPainelDeletar(){
+    
+        container.add(painelDeletar);
+        
+        setVisible(true);
+    
+    }
+    
+    public void desligarPainelDeletar(){
+    
+        container.remove(painelDeletar);
+        
+        setVisible(false);
+    
+    }
+
+    public void iniciarAssociarApostador() {
+        
+        String codigoTeste = inserirCodigoRifa.getText();
+        
+        try{
+            
+            int codigo = receberValorInteiro(codigoTeste);
+            
+            CtrlApostador.getInstancia().associarComRifa(codigo);
+            
+            JOptionPane.showMessageDialog(null, "Apostador Associado Com Sucesso!");
+            
+        }catch(Exception e){
+        
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        
+        }
+    }
+
+    public void iniciarDeletarApostador() {
+        
+        CtrlApostador.getInstancia().deletarApostador();
+        
+        JOptionPane.showMessageDialog(null, "Apostador Deletado Com Sucesso!");
+        
+    }
+    
     private class GerenciadorBotoes implements ActionListener{
 
         public void actionPerformed(ActionEvent ae){
             
-            CtrlApostador.getInstancia().realizaAcaoApostadorIniciado(ae.getActionCommand());
+            Botao teste = (Botao) ae.getSource();
+            
+            CtrlApostador.getInstancia().realizaAcaoApostadorIniciado(teste.getAcao());
               
         }
 

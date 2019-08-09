@@ -34,9 +34,9 @@ public class TelaAcessarRifa extends Tela implements Serializable{
     
     private JTextField inserirCodigo;
     
-    private JButton botaoFinalizar;
+    private Botao botaoFinalizar;
     
-    private JButton voltar;
+    private Botao voltar;
     
     private Container container;
 
@@ -56,9 +56,9 @@ public class TelaAcessarRifa extends Tela implements Serializable{
         
         inserirCodigo = new JTextField(10);
         
-        botaoFinalizar = new JButton("Acessar Rifa");
+        botaoFinalizar = new Botao("Acessar Rifa", AcoesBotao.AcessarRifaTela);
         
-        voltar = new JButton("Voltar");
+        voltar = new Botao("Voltar", AcoesBotao.VoltarTelaAcessarRifa);
         
         container = getContentPane();
         
@@ -68,6 +68,8 @@ public class TelaAcessarRifa extends Tela implements Serializable{
         
         GridBagConstraints c = new GridBagConstraints();
         
+        c.fill = GridBagConstraints.HORIZONTAL;
+
         c.insets = new Insets(0,0,70,0);
         
         container.add(tituloGeral, c);
@@ -146,7 +148,9 @@ public class TelaAcessarRifa extends Tela implements Serializable{
 
         public void actionPerformed(ActionEvent ae){
             
-            CtrlRifa.getInstancia().realizarAcaoAcessarRifa(ae.getActionCommand());
+            Botao teste = (Botao) ae.getSource();
+            
+            CtrlRifa.getInstancia().realizarAcaoAcessarRifa(teste.getAcao());
             
         }
 

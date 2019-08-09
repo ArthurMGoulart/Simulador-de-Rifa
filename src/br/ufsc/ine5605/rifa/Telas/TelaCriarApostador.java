@@ -36,9 +36,9 @@ public class TelaCriarApostador extends Tela{
     
     private JTextField inserirCpf;
     
-    private JButton criarApostador;
+    private Botao criarApostador;
     
-    private JButton voltar;
+    private Botao voltar;
     
     private Container container;
     
@@ -76,9 +76,9 @@ public class TelaCriarApostador extends Tela{
         
         inserirCpf = new JTextField(10);
         
-        criarApostador = new JButton("Criar Apostador!");
+        criarApostador = new Botao("Criar Apostador!", AcoesBotao.CriarApostadorTela);
         
-        voltar = new JButton("Voltar");
+        voltar = new Botao("Voltar", AcoesBotao.VoltarTelaCriarApostador);
         
         container = getContentPane();
         
@@ -88,15 +88,19 @@ public class TelaCriarApostador extends Tela{
         
         GridBagConstraints c = new GridBagConstraints();
         
-        c.insets = new Insets(0,0,70,0);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        
+        c.insets = new Insets(0,0,40,0);
         
         container.add(criandoApostador, c);
         
         c.insets = new Insets(0,0,15,0);
         
         c.gridy = 1;
-        
+           
         container.add(nomeDoApostador, c);
+        
+        c.fill = GridBagConstraints.HORIZONTAL;
         
         c.gridx = 1;
         
@@ -172,7 +176,9 @@ public class TelaCriarApostador extends Tela{
 
         public void actionPerformed(ActionEvent ae){
             
-            CtrlApostador.getInstancia().realizaAcaoCriarApostador(ae.getActionCommand());
+            Botao teste = (Botao) ae.getSource();
+            
+            CtrlApostador.getInstancia().realizarAcaoCriarApostador(teste.getAcao());
                     
         }
 

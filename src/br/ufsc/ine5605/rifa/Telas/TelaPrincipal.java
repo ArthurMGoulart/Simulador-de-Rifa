@@ -8,7 +8,11 @@ package br.ufsc.ine5605.rifa.Telas;
 import br.ufsc.ine5605.rifa.Controles.CtrlPrincipal;
 import java.awt.ComponentOrientation;
 import java.awt.Container;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.Serializable;
@@ -17,6 +21,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.WindowConstants;
 
 /**
  *
@@ -26,13 +31,15 @@ public class TelaPrincipal extends Tela implements Serializable{
     
     private static CtrlPrincipal controlador = CtrlPrincipal.getInstancia();
     
-    private JButton botaoCriarRifa;
+    private Botao botaoCriarRifa;
     
-    private JButton botaoAcessarRifa;
+    private Botao botaoAcessarRifa;
     
-    private JButton botaoCriarApostador;
+    private Botao botaoCriarApostador;
     
-    private JButton botaoAcessarApostador;
+    private Botao botaoAcessarApostador;
+    
+    private Botao botaoFecharPrograma;
     
     private Container menu;
     
@@ -50,28 +57,68 @@ public class TelaPrincipal extends Tela implements Serializable{
     
     public void iniciarComponentes(){
     
-        this.botaoCriarRifa = new JButton("Criar Rifa");
+        this.botaoCriarRifa = new Botao("Criar Rifa", AcoesBotao.CriarRifaMenu);
         
-        this.botaoAcessarRifa = new JButton("Acessar Rifa");
+        this.botaoAcessarRifa = new Botao("Acessar Rifa", AcoesBotao.AcessarRifaMenu);
         
-        this.botaoCriarApostador = new JButton("Criar Apostador");
+        this.botaoCriarApostador = new Botao("Criar Apostador", AcoesBotao.CriarApostadorMenu);
         
-        this.botaoAcessarApostador = new JButton("Acessar Apostador"); 
+        this.botaoAcessarApostador = new Botao("Acessar Apostador", AcoesBotao.AcessarApostadorMenu); 
+        
+        this.botaoFecharPrograma = new Botao("Encerrar Programa", AcoesBotao.Encerrar);
+        
+        botaoCriarRifa.setFont(new Font("TIMES NEW ROMAN", Font.PLAIN, 30));
+        
+        botaoCriarApostador.setFont(new Font("TIMES NEW ROMAN", Font.PLAIN, 30));
+        
+        botaoAcessarRifa.setFont(new Font("TIMES NEW ROMAN", Font.PLAIN, 30));
+        
+        botaoAcessarApostador.setFont(new Font("TIMES NEW ROMAN", Font.PLAIN, 30));
+        
+        botaoFecharPrograma.setFont(new Font("TIMES NEW ROMAN", Font.PLAIN, 30));
+        
+        botaoFecharPrograma.setSize(300, 300);
           
         menu = getContentPane();
          
-        menu.setLayout(new GridLayout(2,2));
+        menu.setLayout(new GridBagLayout());
         
-        setSize(560,300);
+        setSize(720, 300);
         
-        menu.add(botaoCriarRifa);
+        GridBagConstraints c = new GridBagConstraints();
         
-        menu.add(botaoAcessarRifa);
+        c.fill = GridBagConstraints.HORIZONTAL;
         
-        menu.add(botaoCriarApostador);
+        c.insets = new Insets(5, 5, 10,10);
         
-        menu.add(botaoAcessarApostador);
+        menu.add(botaoCriarRifa, c);
         
+        c.gridx = 1;
+        
+        menu.add(botaoAcessarRifa, c);
+        
+        c.gridx = 0;
+        
+        c.gridy = 1;
+        
+        menu.add(botaoCriarApostador, c);
+        
+        c.gridx = 1;
+        
+        c.gridy = 1;
+        
+        menu.add(botaoAcessarApostador, c);
+        
+        c.gridx = 0;
+        
+        c.anchor = GridBagConstraints.LINE_START;
+        
+        c.gridy = 2;
+        
+        c.gridwidth = 2;
+        
+        menu.add(botaoFecharPrograma, c);
+ 
         botaoCriarRifa.addActionListener(gerenciador);
         
         botaoAcessarRifa.addActionListener(gerenciador);
@@ -79,6 +126,8 @@ public class TelaPrincipal extends Tela implements Serializable{
         botaoCriarApostador.addActionListener(gerenciador);
         
         botaoAcessarApostador.addActionListener(gerenciador); 
+        
+        botaoFecharPrograma.addActionListener(gerenciador);
     
     }
     
@@ -115,8 +164,10 @@ public class TelaPrincipal extends Tela implements Serializable{
     private class GerenciadorBotoes implements ActionListener{
 
         public void actionPerformed(ActionEvent ae){
+            
+            Botao teste = (Botao) ae.getSource();
         
-            CtrlPrincipal.getInstancia().realizaAcao(ae.getActionCommand());
+            CtrlPrincipal.getInstancia().realizaAcao(teste.getAcao());
     
         }
 

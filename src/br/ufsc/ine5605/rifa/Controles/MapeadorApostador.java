@@ -56,7 +56,7 @@ public class MapeadorApostador implements Serializable{
     
     public void removerApostador(Apostador apostador){
     
-        cacheApostadores.remove(apostador.getCpf());
+        cacheApostadores.remove(apostador.getCpf(), apostador);
         
         persist();
     

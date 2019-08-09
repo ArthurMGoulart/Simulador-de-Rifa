@@ -55,7 +55,7 @@ public class MapeadorRifa implements Serializable{
     
     public void removerRifa(Rifa rifa){
     
-        cacheRifas.remove(rifa.getCodigo());
+        cacheRifas.remove(rifa.getCodigo(), rifa);
         
         persist();
     

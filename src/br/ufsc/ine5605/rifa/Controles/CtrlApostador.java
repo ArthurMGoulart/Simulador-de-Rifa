@@ -8,25 +8,24 @@ package br.ufsc.ine5605.rifa.Controles;
 import br.ufsc.ine5605.rifa.Entidades.Apostador;
 import br.ufsc.ine5605.rifa.Entidades.EstadoApostador;
 import br.ufsc.ine5605.rifa.Entidades.Rifa;
+import br.ufsc.ine5605.rifa.Telas.AcoesBotao;
 import br.ufsc.ine5605.rifa.Telas.TelaAcessarApostador;
-import br.ufsc.ine5605.rifa.Telas.TelaApostador;
+import br.ufsc.ine5605.rifa.Telas.TelaApostadorComprando;
+import br.ufsc.ine5605.rifa.Telas.TelaApostadorGanhador;
 import br.ufsc.ine5605.rifa.Telas.TelaApostadorIniciado;
 import br.ufsc.ine5605.rifa.Telas.TelaCriarApostador;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Scanner;
+import javax.swing.ListModel;
 
 /**
  *
  * @author budi
  */
 public class CtrlApostador implements Serializable{
-    
-    
-    
-    private TelaApostador tela;
-    
+
     private Apostador apostadorControlado;
     
     private static CtrlPrincipal controlador = CtrlPrincipal.getInstancia();
@@ -37,7 +36,6 @@ public class CtrlApostador implements Serializable{
     
     private CtrlApostador(){
         
-        this.tela = new TelaApostador("APOSTADOR"); 
         
     }
     
@@ -64,17 +62,23 @@ public class CtrlApostador implements Serializable{
         return apostadorControlado.getNome();
         
     }
-
-    public TelaApostador getTela() {
-        
-        return tela;
-        
-    } 
-
-    public CtrlPrincipal getControlador() {
-        
-        return controlador;
-        
+    
+    public MapeadorApostador getMapeadorApostador(){
+    
+        return cache;
+    
+    }
+    
+    public String[] getNumerosDisponiveisVendaRifa(){
+    
+        return apostadorControlado.getRifaAssociada().getRifa().getNumerosDisponiveis();
+    
+    }
+    
+    public String[] getNumerosComprados(){
+    
+        return apostadorControlado.getNumerosComprados();
+    
     }
     
     public void setApostadorControlado(Apostador apostadorControlado) {
@@ -83,9 +87,17 @@ public class CtrlApostador implements Serializable{
         
     }
     
-    public void addNumero(int numero) throws IllegalArgumentException{
+    public void addNumero(int numero) throws Exception{
         
         this.apostadorControlado.comprarNumero(numero);
+        
+        this.apostadorControlado.getRifaAssociada().getRifa().venderNumero(numero);
+        
+        TelaApostadorComprando.getInstancia().desligarPainelComprar();
+        
+        TelaApostadorComprando.getInstancia().atualizarInformacoes();
+        
+        TelaApostadorComprando.getInstancia().ligarPainelMenu();
         
     }
     
@@ -97,8 +109,26 @@ public class CtrlApostador implements Serializable{
             
             TelaAcessarApostador.getInstancia().desligar();
             
+            TelaApostadorIniciado.getInstancia().atualizarNomeApostador();
+            
             TelaApostadorIniciado.getInstancia().ligarPainelMenu();
      
+        }else if(getApostadorControlado().getEstado() == EstadoApostador.ComprandoNumeros){
+        
+            TelaAcessarApostador.getInstancia().desligar();
+            
+            TelaApostadorComprando.getInstancia().atualizarInformacoes();
+            
+            TelaApostadorComprando.getInstancia().ligarPainelMenu();
+        
+        }else if(getApostadorControlado().getEstado() == EstadoApostador.Ganhador){
+        
+            TelaAcessarApostador.getInstancia().desligar();
+            
+            TelaApostadorGanhador.getInstancia().atualizarInformacoes();
+            
+            TelaApostadorGanhador.getInstancia().ligarPainelMenu();
+   
         }
       
     }
@@ -116,6 +146,10 @@ public class CtrlApostador implements Serializable{
         this.apostadorControlado.associarRifa(rifaParaAssociar);
         
         CtrlPrincipal.getInstancia().getControladorRifa().associarApostador(rifaParaAssociar, this.apostadorControlado);
+        
+        TelaApostadorIniciado.getInstancia().desligarPainelAssociar();
+        
+        TelaApostadorIniciado.getInstancia().ligarPainelMenu();
         
     }
 
@@ -149,7 +183,7 @@ public class CtrlApostador implements Serializable{
         
     }
 
-    public void deletaApostador() {
+    public void deletarApostador() {
         
         if(this.apostadorControlado.getRifaAssociada() != null){
         
@@ -159,6 +193,10 @@ public class CtrlApostador implements Serializable{
         
         this.cache.removerApostador(this.apostadorControlado);
         
+        TelaApostadorIniciado.getInstancia().desligarPainelDeletar();
+        
+        CtrlPrincipal.getInstancia().ligarTela();
+        
     }
 
     public void iniciarTelaCriarApostador() {
@@ -167,14 +205,14 @@ public class CtrlApostador implements Serializable{
         
     }
 
-    public void realizaAcaoCriarApostador(String acao) {
+    public void realizarAcaoCriarApostador(AcoesBotao acao) {
         
-        if(acao.equals("Criar Apostador!")){
+        if(acao.equals(AcoesBotao.CriarApostadorTela)){
         
             TelaCriarApostador.getInstancia().iniciarCriarApostador();
             
         
-        }else if(acao.equals("Voltar")){
+        }else if(acao.equals(AcoesBotao.VoltarTelaCriarApostador)){
         
             TelaCriarApostador.getInstancia().desligar();
             
@@ -190,13 +228,13 @@ public class CtrlApostador implements Serializable{
         
     }
 
-    public void realizarAcaoAcessarApostador(String acao){
+    public void realizarAcaoAcessarApostador(AcoesBotao acao){
         
-        if(acao.equals("Acessar Apostador")){
+        if(acao.equals(AcoesBotao.AcessarApostadorTela)){
         
             TelaAcessarApostador.getInstancia().iniciarAcessarApostador();
         
-        }else if(acao.equals("Voltar")){
+        }else if(acao.equals(AcoesBotao.VoltarTelaAcessarApostador)){
             
             TelaAcessarApostador.getInstancia().desligar();
             
@@ -206,33 +244,133 @@ public class CtrlApostador implements Serializable{
         
     }
     
-    public void realizaAcaoApostadorIniciado(String acao){
+    public void realizaAcaoApostadorIniciado(AcoesBotao acao){
         
-        if(acao.equals("Associar Com Rifa")){
+        if(acao.equals(AcoesBotao.AssociarApostadorIniciadoMenu)){
         
             TelaApostadorIniciado.getInstancia().desligarPainelMenu();
             
             TelaApostadorIniciado.getInstancia().ligarPainelAssociar();
         
-        }else if(acao.equals("Deletar Apostador")){
+        }else if(acao.equals(AcoesBotao.DeletarApostadorIniciadoMenu)){
         
             TelaApostadorIniciado.getInstancia().desligarPainelMenu();
+            
+            TelaApostadorIniciado.getInstancia().ligarPainelDeletar();
         
-        }else if(acao.equals("Voltar")){
+        }else if(acao.equals(AcoesBotao.VoltarApostadorIniciadoMenu)){
         
             TelaApostadorIniciado.getInstancia().desligarPainelMenu();
                         
             CtrlPrincipal.getInstancia().ligarTela();
         
-        }else if(acao.equals("Voltar Painel Associar")){
+        }else if(acao.equals(AcoesBotao.AssociarApostadorPainel)){
+        
+            TelaApostadorIniciado.getInstancia().iniciarAssociarApostador();
+
+        }else if(acao.equals(AcoesBotao.VoltarApostadorIniciadoAssociar)){
         
             TelaApostadorIniciado.getInstancia().desligarPainelAssociar();
                         
             TelaApostadorIniciado.getInstancia().ligarPainelMenu();
         
+        }else if(acao.equals(AcoesBotao.DeletarApostadorPainel)){
+        
+            TelaApostadorIniciado.getInstancia().iniciarDeletarApostador();
+        
+        }else if(acao.equals(AcoesBotao.VoltarApostadorIniciadoDeletar)){
+        
+            TelaApostadorIniciado.getInstancia().desligarPainelDeletar();
+            
+            TelaApostadorIniciado.getInstancia().ligarPainelMenu();
+
         }
     
     
+    }
+
+    public void realizaAcaoApostadorComprando(AcoesBotao acao) {
+        
+        if(acao.equals(AcoesBotao.ComprarNumeroMenu)){
+            
+            TelaApostadorComprando.getInstancia().desligarPainelMenu();
+            
+            TelaApostadorComprando.getInstancia().ligarPainelComprar();
+        
+        }else if(acao.equals(AcoesBotao.ListarNumerosDisponiveis)){
+            
+            TelaApostadorComprando.getInstancia().desligarPainelMenu();
+        
+            TelaApostadorComprando.getInstancia().ligarPainelListarNumerosDisponiveis();
+        
+        }else if(acao.equals(AcoesBotao.ListarNumerosComprados)){
+        
+            TelaApostadorComprando.getInstancia().desligarPainelMenu();
+            
+            TelaApostadorComprando.getInstancia().ligarPainelListarNumerosComprados();
+        
+        }else if(acao.equals(AcoesBotao.ComprarNumeroPainel)){
+        
+            TelaApostadorComprando.getInstancia().iniciarComprarNumero();
+            
+            TelaApostadorComprando.getInstancia().atualizarInformacoes();
+        
+        }else if(acao.equals(AcoesBotao.VoltarApostadorComprandoMenu)){
+        
+            TelaApostadorComprando.getInstancia().desligarPainelMenu();
+            
+            CtrlPrincipal.getInstancia().ligarTela();
+        
+        }else if(acao.equals(AcoesBotao.VoltarApostadorComprandoNumero)){
+            
+            TelaApostadorComprando.getInstancia().desligarPainelComprar();
+            
+            TelaApostadorComprando.getInstancia().ligarPainelMenu();
+        
+        }else if(acao.equals(AcoesBotao.VoltarApostadorComprandoListandoDisponiveis)){
+            
+            TelaApostadorComprando.getInstancia().desligarPainelListarNumerosDisponiveis();
+            
+            TelaApostadorComprando.getInstancia().ligarPainelMenu();
+            
+        }else if(acao.equals(AcoesBotao.VoltarApostadorComprandoListandoComprados)){
+            
+            TelaApostadorComprando.getInstancia().desligarPainelListarNumerosComprados();
+        
+            TelaApostadorComprando.getInstancia().ligarPainelMenu();
+        
+        }
+        
+    }
+
+    public void realizaAcaoApostadorGanhador(AcoesBotao acao) {
+
+        if(acao.equals(AcoesBotao.ListarProdutosGanhos)){
+        
+            TelaApostadorGanhador.getInstancia().desligarPainelMenu();
+            
+            TelaApostadorGanhador.getInstancia().ligarPainelListagem();
+        
+        }else if(acao.equals(AcoesBotao.VoltarApostadorComprandoMenu)){
+        
+            TelaApostadorGanhador.getInstancia().desligarPainelMenu();
+            
+            CtrlPrincipal.getInstancia().ligarTela();
+    
+        }else if(acao.equals(AcoesBotao.VoltarListagemApostadorGanhador)){
+        
+            TelaApostadorGanhador.getInstancia().desligarPainelListagem();
+            
+            TelaApostadorGanhador.getInstancia().ligarPainelMenu();
+   
+        }
+        
+    }
+
+    public String[] getProdutosGanhos() {
+        
+        return this.apostadorControlado.getNomeProdutosGanhos();
+        
     }
 
 }

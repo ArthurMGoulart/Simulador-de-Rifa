@@ -12,8 +12,8 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.Serializable;
-import javax.swing.JButton;
 import javax.swing.JList;
+import javax.swing.JPanel;
 
 /**
  *
@@ -25,7 +25,15 @@ public class TelaListarApostadoresDaRifa extends Tela implements Serializable{
     
     private JList apostadores;
     
-    private JButton voltar;
+    private JList apostadoresGanhadores;
+    
+    private Botao voltarListagem;
+    
+    private Botao voltarListagemGanhadores;
+    
+    private JPanel listarApostadores;
+    
+    private JPanel listarApostadoresGanhadores;
     
     private Container container;
     
@@ -35,7 +43,15 @@ public class TelaListarApostadoresDaRifa extends Tela implements Serializable{
     
         super("Listando Apostadores");
         
-        iniciarComponentes();
+        container = getContentPane();
+        
+        container.setLayout(new GridBagLayout());
+        
+        setSize(700,320);
+        
+        iniciarComponentesListagemApostadores();
+        
+        iniciarComponentesListagemApostadoresGanhadores();
     
     }
     
@@ -51,50 +67,114 @@ public class TelaListarApostadoresDaRifa extends Tela implements Serializable{
     
     }
     
-    public void iniciarComponentes(){
+    public void iniciarComponentesListagemApostadores(){
         
         apostadores = new JList(CtrlRifa.getInstancia().getNomesApostadoresDaRifa());
         
-        voltar = new JButton("Voltar");
+        voltarListagem = new Botao("Voltar", AcoesBotao.VoltarListagemApostadores);
         
-        container = getContentPane();
-        
-        container.setLayout(new GridBagLayout());
+        listarApostadores = new JPanel(new GridBagLayout());
         
         setSize(700,320);
         
         GridBagConstraints c = new GridBagConstraints();
+        
+        c.fill = GridBagConstraints.HORIZONTAL;
+        
+        listarApostadores.add(apostadores, c);
 
         c.gridy = 1;
         
-        container.add(voltar, c);
+        listarApostadores.add(voltarListagem, c);
         
-        voltar.addActionListener(gerenciador);
+        voltarListagem.addActionListener(gerenciador);
     
     }
     
-    public void atualizarListagem(){
+    public void iniciarComponentesListagemApostadoresGanhadores(){
     
-        container.remove(apostadores);
+        apostadoresGanhadores = new JList(CtrlRifa.getInstancia().getNomesApostadoresGanhadoresDaRifa());
+        
+        voltarListagemGanhadores = new Botao("Voltar", AcoesBotao.VoltarListagemApostadoresGanhadores);
+        
+        listarApostadoresGanhadores = new JPanel(new GridBagLayout());
+        
+        setSize(700,320);
+        
+        GridBagConstraints c = new GridBagConstraints();
+        
+        c.fill = GridBagConstraints.HORIZONTAL;
+        
+        listarApostadoresGanhadores.add(apostadoresGanhadores, c);
+
+        c.gridy = 1;
+        
+        listarApostadoresGanhadores.add(voltarListagemGanhadores, c);
+        
+        voltarListagemGanhadores.addActionListener(gerenciador);
+    
+    }
+    
+    public void atualizarListagemApostadores(){
+    
+        listarApostadores.remove(apostadores);
         
         apostadores = new JList(CtrlRifa.getInstancia().getNomesApostadoresDaRifa());
         
         GridBagConstraints c = new GridBagConstraints();
         
+        c.fill = GridBagConstraints.HORIZONTAL;
+        
         c.gridx = 0;
         
-        container.add(apostadores, c);
+        listarApostadores.add(apostadores, c);
     
     }
     
-    public void ligar(){
+    public void atualizarListagemApostadoresGanhadores(){
     
+        listarApostadoresGanhadores.remove(apostadoresGanhadores);
+        
+        apostadoresGanhadores = new JList(CtrlRifa.getInstancia().getNomesApostadoresGanhadoresDaRifa());
+        
+        GridBagConstraints c = new GridBagConstraints();
+        
+        c.fill = GridBagConstraints.HORIZONTAL;
+        
+        c.gridx = 0;
+        
+        listarApostadoresGanhadores.add(apostadoresGanhadores, c);
+    
+    }
+    
+    public void ligarListagemApostadores(){
+    
+        container.add(listarApostadores);
+        
         setVisible(true);
     
     }
     
-    public void desligar(){
+    public void ligarListagemApostadoresGanhadores(){
     
+        container.add(listarApostadoresGanhadores);
+        
+        setVisible(true);
+        
+    }
+    
+    public void desligarListagemApostadores(){
+    
+        container.remove(listarApostadores);
+        
+        setVisible(false);
+        
+    }
+    
+    public void desligarListagemApostadoresGanhadores(){
+    
+        container.remove(listarApostadoresGanhadores);
+        
         setVisible(false);
         
     }
@@ -102,10 +182,10 @@ public class TelaListarApostadoresDaRifa extends Tela implements Serializable{
     private class GerenciadorBotoes implements ActionListener{
 
         public void actionPerformed(ActionEvent ae){
-  
-            TelaListarApostadoresDaRifa.getInstancia().desligar();
             
-            CtrlRifa.getInstancia().iniciarTelaRifaNaoFinalizada();
+            Botao teste = (Botao) ae.getSource();
+            
+            CtrlRifa.getInstancia().realizaAcaoTelaListarApostadores(teste.getAcao());
             
         }
 
