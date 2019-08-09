@@ -3,17 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.ufsc.ine5605.rifa.Entidades;
-
-import br.ufsc.ine5605.rifa.Entidades.Apostador;
-import br.ufsc.ine5605.rifa.Entidades.Rifa;
-import java.io.Serializable;
+package br.ufsc.ine5605.rifa;
 
 /**
  *
  * @author budi
  */
-public class AssocRifaApostador implements Serializable{
+public class AssocRifaApostador {
     
     private Apostador apostador;
     

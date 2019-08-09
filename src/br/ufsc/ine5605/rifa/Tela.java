@@ -3,31 +3,29 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.ufsc.ine5605.rifa.Telas;
+package br.ufsc.ine5605.rifa;
 
-import java.io.Serializable;
 import java.util.InputMismatchException;
+
 import java.util.Scanner;
-import javax.swing.JButton;
-import javax.swing.JFrame;
 
 /**
  *
  * @author budi
  */
-public abstract class Tela extends JFrame implements Serializable{
+public abstract class Tela {
     
     public Scanner entradaDeDados;
     
-    public Tela(String guia){
-        
-        super(guia);
-        
+    public Tela(){
+    
         this.entradaDeDados = new Scanner(System.in);
     
     }
     
-    public String receberTexto(String linha) throws NumberFormatException{
+    public String receberTexto() throws NumberFormatException{
+    
+        String linha = entradaDeDados.nextLine();
         
         if(eUmNumero(linha)){
         
@@ -41,7 +39,11 @@ public abstract class Tela extends JFrame implements Serializable{
        
     }
     
-    public int receberValorInteiro(String linha) throws NumberFormatException{
+    public int receberValorInteiro() throws NumberFormatException{
+               
+        String linha;
+            
+        linha = entradaDeDados.nextLine();
             
         if(!eUmNumero(linha)){
         
@@ -71,6 +73,14 @@ public abstract class Tela extends JFrame implements Serializable{
             
         }
 
+    }
+    
+    public void mensagemEnter(){
+    
+        System.out.println("Digite <ENTER> para continuar");
+        
+        entradaDeDados.nextLine();
+    
     }
     
 }

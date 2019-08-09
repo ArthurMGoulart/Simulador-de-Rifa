@@ -5,18 +5,16 @@
  */
 package br.ufsc.ine5605.rifa;
 
-import br.ufsc.ine5605.rifa.Controles.CtrlPrincipal;
-
 /**
  *
  * @author budi 
  */
 public class Main {
     
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         
-        CtrlPrincipal geral = CtrlPrincipal.getInstancia();     
-        
+        CtrlPrincipal geral = new CtrlPrincipal();      
+                
     }
     
 }

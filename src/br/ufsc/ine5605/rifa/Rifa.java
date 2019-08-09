@@ -3,10 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.ufsc.ine5605.rifa.Entidades;
+package br.ufsc.ine5605.rifa;
 
-import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import java.util.Arrays;
@@ -20,9 +18,11 @@ import java.util.Random;
  *
  * @author budi
  */
-public class Rifa implements Serializable{
+public class Rifa {
     
-    private Integer codigo;
+    private CtrlRifa controlador;
+    
+    private int codigo;
     
     private ArrayList<AssocRifaApostador> apostadores;
     
@@ -44,7 +44,9 @@ public class Rifa implements Serializable{
     
     private boolean finalizada = false;
     
-    public Rifa(int codigo, int porcentagemDeLucro, int quantidadeDeNumerosParaVender) {
+    public Rifa(CtrlRifa controlador, int codigo, int porcentagemDeLucro, int quantidadeDeNumerosParaVender) {
+        
+        this.controlador = controlador;
         
         this.codigo = codigo;
         
@@ -144,14 +146,14 @@ public class Rifa implements Serializable{
  
     public void adicionarProduto(String nome, int preco) throws IllegalArgumentException{
                        
-        if(nome == null || nome.equals("")){
+        if(preco <= 0){
+        
+            throw new IllegalArgumentException("Preco produto menor ou igual a zero");
+        
+        }else if(nome == null || nome.equals("")){
             
             throw new IllegalArgumentException("Nome nulo do Produto");
             
-        }else if(preco <= 0){
-            
-            throw new IllegalArgumentException("Preco invalido do Produto");
-                 
         }
             
         Produto produto = new Produto(nome, preco);
@@ -163,7 +165,7 @@ public class Rifa implements Serializable{
 
     public void finalizar() {
         
-        somarOsPrecosProduto();
+        calcularCusto();
         
         calcularPrecoPorNumero();
         
@@ -171,9 +173,17 @@ public class Rifa implements Serializable{
     
     }
     
+    public void definirNumerosParaVender(){
     
+        for(int i = 0; i < this.quantidadeDeNumerosParaVender; i++){
+        
+            this.numerosParaVender.add(i);
+            
+        }
     
-    public void somarOsPrecosProduto(){
+    }
+    
+    public void calcularCusto(){
         
         for(Produto produto : produtos){
         
@@ -231,7 +241,7 @@ public class Rifa implements Serializable{
         
         }else if(!temNumeroDisponivelParaVender(numero)){
         
-            throw new Exception("Numero ja comprado");
+            throw new Exception("Numero ja vendido");
         
         }
         
@@ -241,7 +251,7 @@ public class Rifa implements Serializable{
         
     }
     
-    public String[] sortearUmProduto() throws Exception{
+    public void sortearUmProduto() throws Exception{
         
         if(produtos.isEmpty()){
         
@@ -257,21 +267,13 @@ public class Rifa implements Serializable{
                 
         Produto produtoSorteado = retornarProdutoComMenorPreco();
                 
+        this.controlador.getTela().sortearUmProduto(numeroSorteado , produtoSorteado.getNome(), produtoSorteado.getPreco(), apostadorGanhador.getNome(), apostadorGanhador.getCpf());
+                
         apostadorGanhador.receberProdutoGanho(produtoSorteado);
         
         numerosParaSortear.remove(Integer.valueOf(numeroSorteado));
                 
         produtos.remove(produtoSorteado);
-        
-        String[] informacoes = new String[3];
-        
-        informacoes[0] = Integer.toString(numeroSorteado);
-        
-        informacoes[1] = produtoSorteado.getNome();
-        
-        informacoes[2] = apostadorGanhador.getNome();
-        
-        return informacoes;
                        
     }
     
@@ -331,16 +333,6 @@ public class Rifa implements Serializable{
     
     }
     
-    public void definirNumerosParaVender(){
-    
-        for(int i = 0; i < this.quantidadeDeNumerosParaVender; i++){
-        
-            this.numerosParaVender.add(i);
-            
-        }
-    
-    }
-    
     public boolean temApostadorComCpf(int cpf){
     
         for(AssocRifaApostador apostador : apostadores){
@@ -379,90 +371,6 @@ public class Rifa implements Serializable{
        
         return this.custo - (this.numerosParaSortear.size() * precoPorNumero);
         
-    }
-    
-    public String[] getNomeProdutos(){
-
-        String[] nomes = new String[produtos.size()];
-        
-        int i = 0;
-        
-        for(Produto produtoTeste : produtos){
-        
-            nomes[i] = produtoTeste.getNome();
-        
-            i++;
-            
-        }
-
-        return nomes;
-        
-    }
-    
-    public String[] getNomeApostadores(){
-    
-        String[] nomes = new String[apostadores.size()];
-    
-        int i = 0;
-        
-        for(AssocRifaApostador apostadorTeste : apostadores){
-        
-            nomes[i] = apostadorTeste.getApostador().getNome();
-        
-            i++;
-            
-        }
-        
-        return nomes;
-        
-    }
-    
-    public String[] getNomeApostadoresGanhadores(){
-
-        Apostador[] apostadoresGanhadores = new Apostador[apostadores.size()];
-        
-        int k = 0;
-        
-        for(AssocRifaApostador apostadorTeste : apostadores){
-        
-            if(apostadorTeste.getApostador().eGanhador()){
-                
-                apostadoresGanhadores[k] = apostadorTeste.getApostador();
-                
-                k++;
-            
-            }
-        
-        }
-        
-        String[] nomes = new String[k];
-        
-        for(int y = 0; y < k; y++){
-        
-            nomes[y] = apostadoresGanhadores[y].getNome();
-        
-        }
-        
-        return nomes;
-        
-    }
-    
-    public String[] getNumerosDisponiveis(){
-        
-        String[] numeros = new String[numerosParaVender.size()];
-        
-        int k = 0;
-        
-        for(Integer numero : numerosParaVender){
-        
-            numeros[k] = Integer.toString(numero);
-            
-            k++;
-        
-        }
-        
-        return numeros;
-    
     }
 
 }

@@ -3,30 +3,27 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.ufsc.ine5605.rifa.Entidades;
+package br.ufsc.ine5605.rifa;
 
-import br.ufsc.ine5605.rifa.Entidades.Pessoa;
-import br.ufsc.ine5605.rifa.Entidades.Produto;
-import br.ufsc.ine5605.rifa.Entidades.Rifa;
-import br.ufsc.ine5605.rifa.Controles.CtrlApostador;
-import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  *
  * @author budi
  */
-public class Apostador extends Pessoa implements Serializable{
+public class Apostador extends Pessoa{
     
     private ArrayList<Integer> numerosComprados;
     
     private AssocRifaApostador rifaAssociada;
     
     private EstadoApostador estado;
+    
+    private CtrlApostador controlador;
        
     private ArrayList<Produto> produtosGanhos;
 
-    public Apostador(String nome, int cpf) {
+    public Apostador(CtrlApostador controlador, String nome, int cpf) {
         
         super(nome,cpf);
         
@@ -38,27 +35,21 @@ public class Apostador extends Pessoa implements Serializable{
         
     }
 
+    public ArrayList<Integer> getNumerosComprados() {
+        
+        return numerosComprados;
+        
+    }
+
     public AssocRifaApostador getRifaAssociada() {
         
         return rifaAssociada;
         
     }
 
-    public String[] getNomeProdutosGanhos() {
+    public ArrayList<Produto> getProdutosGanhos() {
         
-        String[] nomes = new String[produtosGanhos.size()];
-        
-        int i = 0;
-        
-        for(Produto produto : produtosGanhos){
-        
-            nomes[i] = produto.getNome();
-            
-            i++;
-        
-        }
-        
-        return nomes;
+        return produtosGanhos;
         
     }
     
@@ -162,24 +153,6 @@ public class Apostador extends Pessoa implements Serializable{
         
         return true;
     
-    }
-    
-    public String[] getNumerosComprados(){
-        
-        String[] numeros = new String[this.numerosComprados.size()];
-        
-        int i = 0;
-    
-        for(Integer numeroTeste : numerosComprados){
-        
-            numeros[i] = Integer.toString(numeroTeste);
-            
-            i++;
-        
-        }
-        
-        return numeros;
-
     }
     
 }

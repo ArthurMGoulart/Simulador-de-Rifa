@@ -3,15 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.ufsc.ine5605.rifa.Entidades;
-
-import java.io.Serializable;
+package br.ufsc.ine5605.rifa;
 
 /**
  *
  * @author 05380317006
  */
-public class Pessoa implements Serializable{
+public class Pessoa {
     
     private String nome;
     
